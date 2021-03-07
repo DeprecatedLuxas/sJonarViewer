@@ -33,19 +33,16 @@ const ScanItemContainer = styled.div`
 `;
 
 type ScanItemProps = {
-    query: ScanItemQueryProps
+    query: {
+        searchBar: string,
+        properties: {
+            key: string,
+            value: boolean | string | number
+        }[],
+        searchQuery: string
+    }
 }
 
-type ScanItemQueryProps = {
-    searchBar: string,
-    properties: ScanItemPropertiesProps[]
-    searchQuery: string
-}
-
-type ScanItemPropertiesProps = {
-    key: string,
-    value: boolean | string | number
-}
 
 class ScanItem extends Component<ScanItemProps, any> {
 
@@ -64,17 +61,18 @@ class ScanItem extends Component<ScanItemProps, any> {
                     }
                     return (
                         <ScanItemProperty
-                                         key={scan.key}
-                                          query={{
-                                              properties: {
-                                                  key: scan.key,
-                                                  value: scan.value
-                                              },
-                                              dataValue: (dataValue !== "Couldn't get data" ? encodeURIComponent(dataValue) : "invalid"),
-                                              dataKey: (dataKey !== "Couldn't get data" ? encodeURIComponent(dataKey) : "invalid"),
-                                              searchBar: searchBar,
-                                              searchQuery: searchQuery
-                                          }}/>
+                                         
+                                         query={{
+                                            properties: {
+                                                key: scan.key,
+                                                value: scan.value
+                                            },
+                                            dataValue: (dataValue !== "Couldn't get data" ? encodeURIComponent(dataValue) : "invalid"),
+                                            dataKey: (dataKey !== "Couldn't get data" ? encodeURIComponent(dataKey) : "invalid"),
+                                            searchBar: searchBar,
+                                            searchQuery: searchQuery
+                                        }}
+                                        key={scan.key}/>
                     );
                 }) : ''}
             </ScanItemContainer>

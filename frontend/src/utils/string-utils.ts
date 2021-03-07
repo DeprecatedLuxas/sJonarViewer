@@ -26,3 +26,42 @@ export function parseString(key: string, value: string | number | boolean) {
     }
     return value;
 }
+
+
+
+export function sortValues(key: string, order = "asc") {
+    return function innerSort(a: any, b: any) {
+        if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+          // property doesn't exist on either object
+          return 0;
+        }
+    
+        const varA = (typeof a[key] === 'string')
+          ? a[key].toUpperCase() : a[key];
+        const varB = (typeof b[key] === 'string')
+          ? b[key].toUpperCase() : b[key];
+    
+        let comparison = 0;
+        if (varA > varB) {
+          comparison = 1;
+        } else if (varA < varB) {
+          comparison = -1;
+        }
+        return (
+          (order === 'desc') ? (comparison * -1) : comparison
+        );
+      };
+}
+
+export function encodeSearch(search: string) {
+    return btoa(encodeURIComponent(search).replace(/%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+            return String.fromCharCode(parseInt('0x' + p1, 16));
+    }));
+}
+
+export function decodeSearch(search: string) {
+    return decodeURIComponent(atob(search).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}

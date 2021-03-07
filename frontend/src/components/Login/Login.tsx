@@ -129,9 +129,6 @@ const UserLoginForm = ({onSuccessValidation, loginError}: UserLoginFormProps) =>
                         onChange={handleChange}
                     />
                 </LoginInputContainer>
-                {errors.username && touched.username ? (
-                    <ErrorMessage>{errors.username}</ErrorMessage>
-                ) : null}
                 <LoginInputContainer>
                     <LoginInputLabel>Password</LoginInputLabel>
                     <LoginInputField
@@ -142,6 +139,9 @@ const UserLoginForm = ({onSuccessValidation, loginError}: UserLoginFormProps) =>
                         onChange={handleChange}
                     />
                 </LoginInputContainer>
+                {errors.username && touched.username ? (
+                    <ErrorMessage>{errors.username}</ErrorMessage>
+                ) : null}
                 {errors.password && touched.password ? (
                     <ErrorMessage>{errors.password}</ErrorMessage>
                 ) : null}

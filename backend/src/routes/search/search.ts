@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { request, Router } from 'express';
 import auth from "../../middleware/auth";
 import {
     buildSQLStatement,
@@ -17,6 +17,11 @@ function buildEmptyObject() {
     }
     return obj;
 }
+function decodeSearch(search: string) {
+    return decodeURIComponent(Buffer.from(search, "base64").toString("utf-8").split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
 
 
 router.get("/", auth, (req, res) => {
@@ -26,9 +31,8 @@ router.get("/", auth, (req, res) => {
            data: "Bad Request"
        })
    }
-
    // @ts-ignore
-    let parsedSearchQuery = JSON.parse(requestQuery.query);
+    let parsedSearchQuery = JSON.parse(decodeSearch(requestQuery.query));
     const queryBuilder = buildSQLStatement(parsedSearchQuery);
     const firstMergeObject = buildEmptyObject();
     queryBuilder.then(data => {
