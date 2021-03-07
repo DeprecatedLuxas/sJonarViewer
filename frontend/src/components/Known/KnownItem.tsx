@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import styled from 'styled-components'
 import {buildNewSearch} from "../../utils";
-
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 const KnownItemContainer = styled.div`
     margin: 10px;
     width: 350px;
@@ -52,7 +52,7 @@ const KnownItemButton = styled.a`
     
 `;
 
-type KnownItemProps = {
+interface KnownItemProps extends RouteComponentProps<any> {
     known: KnownItemKnownProps
 }
 type KnownItemKnownProps = {
@@ -66,14 +66,17 @@ type KnownItemKnownProps = {
 class KnownItem extends Component<KnownItemProps, any> {
 
 
-    redoSearch = () => {
-        const url = buildNewSearch({
-            dataKey: "JARMHASH",
-            dataValue: this.props.known.jarmHash,
-            searchBar: "",
-            searchQuery: encodeURIComponent(JSON.stringify({}))
-        })
-        window.open(url);
+    redoSearch = (event: React.MouseEvent) => {
+        const url = buildNewSearch(encodeURIComponent(JSON.stringify({})), this.props.known.jarmHash, "JARMHASH")
+        const metaKeyPressed = event.ctrlKey
+
+        if (metaKeyPressed) {
+            window.open(url);
+        } else {
+    
+            // @ts-ignore
+            this.props.history.push(url)
+        }
 
     }
 
@@ -112,4 +115,4 @@ class KnownItem extends Component<KnownItemProps, any> {
 }
 
 
-export default KnownItem;
+export default withRouter(KnownItem);

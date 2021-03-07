@@ -1,5 +1,5 @@
 import {SQLColumn} from "../types/sql-types";
-import config from "../config";
+import config from "@config";
 
 
 export function getColumn(columnName: string): SQLColumn {
