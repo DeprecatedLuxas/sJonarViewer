@@ -1,10 +1,12 @@
 import * as _ from 'lodash'
-import {IMatchedKeyword, ISearchQuery, SearchParameters} from "../types/search-types";
+import {IMatchedKeyword, ISearchQuery} from "../types/search-types";
 import {getColumn, getKeywords, getRanges, isColumnConditional} from "./column-utils";
 import {
     merge
 } from "./object-utils"
-
+import {
+    encodeSearch
+} from "./string-utils"
 const searchRegex = /(\S+:'(?:[^'\\]|\\.)*')|(\S+:"(?:[^"\\]|\\.)*")|(-?"(?:[^"\\]|\\.)*")|(-?'(?:[^'\\]|\\.)*')|\S+|\S+:\S+/g;
 
 
@@ -121,13 +123,12 @@ export function convertObjectToSearch(obj: any) {
     return returnedArray.join(" ");
 }
 
-export function buildNewSearch(searchParameters: SearchParameters) {
-    const parsedSearchQuery = JSON.parse(decodeURIComponent(searchParameters.searchQuery));
+export function buildNewSearch(searchQuery: string, dataValue: string, dataKey: string) {
+    const parsedSearchQuery = JSON.parse(decodeURIComponent(searchQuery));
     const NewObject = {}
+    
     // @ts-ignore
-    NewObject[searchParameters.dataKey.toLowerCase()] = decodeURIComponent(searchParameters.dataValue);
-    const querySearch = encodeURIComponent(JSON.stringify(merge(parsedSearchQuery, NewObject)));
-
-    return `/?fromRedoSearch=true&searchBar=${searchParameters.searchBar}&querySearch=${querySearch}`;
+    NewObject[dataKey.toLowerCase()] = decodeURIComponent(dataValue);
+    return `search?query=${encodeSearch(JSON.stringify(merge(parsedSearchQuery, NewObject)))}`;
 }
 

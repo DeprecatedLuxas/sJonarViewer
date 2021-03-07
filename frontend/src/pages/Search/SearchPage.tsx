@@ -2,17 +2,17 @@ import React, {FormEvent} from "react";
 import {SearchButton, SearchForm,} from "../../components/SearchForm/SearchForm";
 import ScanItem from "../../components/ScanItem/ScanItem";
 import {ScanItems} from "../../components/ScanItems/ScanItems";
+import axios from "axios";
 import * as _ from "lodash";
 import styled from 'styled-components'
-import Known from '../../components/Known/Known'
 import {
     SQLColumn
 } from "../../types/sql-types"
 import {convertObjectToSearch, getParameterByName, parseSearchBar, verifyUser, encodeSearch, decodeSearch} from "../../utils";
 import config from "@config";
 import CsvDownload from "../../components/Csv/CsvDownload";
-import {ErrorMessage} from "../../components/Error/ErrorMessage"
-const StyledHomeContainer = styled.div`
+
+const StyledSearchContainer = styled.div`
     width: 100%;
     height: 100%;
 `;
@@ -46,7 +46,7 @@ const SearchContainer = styled.div`
     }
 `;
 
-type HomePageState = {
+type SearchPageState = {
     query: string,
     searchQuery: string,
     scans: SQLColumn[],
@@ -57,7 +57,7 @@ type HomePageState = {
 }
 
 
-class Home extends React.Component<any, HomePageState> {
+class SearchPage extends React.Component<any, SearchPageState> {
 
 
     constructor(props: any) {
@@ -75,11 +75,24 @@ class Home extends React.Component<any, HomePageState> {
         }
     }
 
+
     componentDidMount() {
         // Verifying the user cookie.
         verifyUser(this.props);
         
-        
+        this.updateUI();
+    }
+
+
+
+    componentDidUpdate(prevProps: any, prevState: any) {
+        if (this.props.location.search !== prevProps.location.search) {
+            this.updateUI()
+        }
+    }
+
+    updateUI = () => {
+        console.log("UPDATE UI CALLED");
         const queryParameters = new URLSearchParams(this.props.location.search);
 
         const queryParameter = queryParameters.get("query");
@@ -88,12 +101,11 @@ class Home extends React.Component<any, HomePageState> {
             this.setState({
                 search: convertObjectToSearch(parsedDecodedSearch)
             }, () => {
+                console.log("retrieving data")
                 this.retrieveData()
             })
         }
-
     }
-
 
 
     onSearchBarChange = (event: any) => {
@@ -121,25 +133,21 @@ class Home extends React.Component<any, HomePageState> {
                 return;
             }
             const parsedStateSearch = parseSearchBar(search);
-
             if (_.isEmpty(parsedStateSearch)) {
-                
                 this.setState({
                     errorOccurred: true,
-                    errorMessage: "Your search input did not match any of the operators."
-                });
-                return;
-            }
-            if (_.values(parsedStateSearch).every(_.isEmpty)) {
-                this.setState({
-                    errorOccurred: true,
-                    errorMessage: "Your search operators need a value"
+                    errorMessage: "No Results"
                 });
                 return;
             }
 
-            this.props.history.push(`search?query=${encodeSearch(`${JSON.stringify(parsedStateSearch)}`)}`)
-
+            const response = await axios.get(`/api/search?query=${encodeSearch(`${JSON.stringify(parsedStateSearch)}`)}`);
+            this.setState({
+                scans: response.data.scans,
+                searchQuery: encodeURIComponent(JSON.stringify(parsedStateSearch)),
+                errorMessage: "",
+                errorOccurred: false
+            })
 
         } catch (error) {
             this.setState({
@@ -160,7 +168,7 @@ class Home extends React.Component<any, HomePageState> {
     render() {
         const {search, scans, errorMessage, loading, errorOccurred} = this.state;
         return (
-            <StyledHomeContainer>
+            <StyledSearchContainer>
                 <div>
                     <SearchContainer>
                         <h1 style={{textAlign: "center"}}>sJonar</h1>
@@ -179,12 +187,12 @@ class Home extends React.Component<any, HomePageState> {
                                 ) : ''
                             }
                         </SearchForm>
-                        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                        {errorMessage && <span>{errorMessage}</span>}
 
 
 
                     </SearchContainer>
-                    <Known/>
+    
                 </div>
 
 
@@ -197,7 +205,7 @@ class Home extends React.Component<any, HomePageState> {
                             properties: Object.keys(scan).map(e => ({key: e, value: scan[e]})),
                             searchQuery: this.state.searchQuery
                         }
-         
+            
                         return (
                             <ScanItem key={scan[0]}
                                 query={queryObj} />
@@ -205,14 +213,14 @@ class Home extends React.Component<any, HomePageState> {
                     }) : ''}
                 </ScanItems>
 
-            </StyledHomeContainer>
+            </StyledSearchContainer>
 
         );
     }
 }
 
 
-export default Home;
+export default SearchPage;
 
 
 

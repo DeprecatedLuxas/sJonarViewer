@@ -1,11 +1,13 @@
-import React, {Component} from "react";
-
-
+import React, {Component, MouseEventHandler} from "react";
 import styled from "styled-components";
-
 import {buildNewSearch, parseString} from "../../utils";
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+
 
 const ScanItemDiv = styled.div`
+    &:hover {
+        background-color: green;
+    }
 
 `;
 const ScanItemValue = styled.span`
@@ -15,43 +17,45 @@ const ScanItemValue = styled.span`
 const ScanItemKey = styled.h4`
     color: #007bff;
 `;
-type ScanItemPropertyProps = {
-    query: ScanItemPropertyQueryProps
+interface ScanItemPropertyProps extends RouteComponentProps<any> {
+    query: {
+        searchBar: string,
+        properties:{
+            key: string,
+            value: boolean | string | number
+        },
+        dataValue: string,
+        dataKey: string,
+        searchQuery: string
+    }
 }
 
-type ScanItemPropertyQueryProps = {
-    searchBar: string,
-    properties: ScanItemPropertyPropertiesProps,
-    dataValue: string,
-    dataKey: string,
-    searchQuery: string
-}
 
-type ScanItemPropertyPropertiesProps = {
-    key: string,
-    value: boolean | string | number
-}
 
 
 class ScanItemProperty extends Component<ScanItemPropertyProps, any> {
 
 
-    redoSearch = () => {
+
+
+   
+    redoSearch = (event: React.MouseEvent) => { 
+
         const {
             dataKey,
             dataValue,
-            searchBar,
             searchQuery
         } = this.props.query;
+        const url = buildNewSearch(searchQuery, dataValue, dataKey);
+        const metaKeyPressed = event.ctrlKey
 
-        const url = buildNewSearch({
-            dataKey: dataKey,
-            dataValue: dataValue,
-            searchBar: searchBar,
-            searchQuery: searchQuery
-        })
-        window.open(url);
-
+        if (metaKeyPressed) {
+            window.open(url);
+        } else {
+    
+            // @ts-ignore
+            this.props.history.push(url)
+        }
     }
 
 
@@ -80,4 +84,4 @@ class ScanItemProperty extends Component<ScanItemPropertyProps, any> {
 }
 
 
-export default ScanItemProperty;
+export default withRouter(ScanItemProperty); 
