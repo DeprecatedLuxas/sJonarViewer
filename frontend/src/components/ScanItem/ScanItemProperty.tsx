@@ -6,7 +6,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 const ScanItemDiv = styled.div`
     &:hover {
-        background-color: green;
+        
     }
 
 `;
