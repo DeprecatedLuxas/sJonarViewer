@@ -7,7 +7,7 @@ import { sortValues } from "../../utils";
 import { v4 as uuidv4 } from "uuid";
 import * as PropTypes from "prop-types";
 import Select from "react-select";
-
+import { Header } from "../../components/Header/Header"; 
 const KnownsContainer = styled.div`
     width: 90%;
     max-height: auto;
@@ -208,7 +208,7 @@ class Known extends Component<any, KnownState> {
             <KnownsContainer>
                 {usingSort ? (
                     <SearchContainer>
-                        <h1 style={{ textAlign: "center" }}>sJonar</h1>
+                        <Header onClick={() => this.props.history.push("/")}>sJonar</Header>
                         <Select
                             styles={selectStyles}
                             width="100%"

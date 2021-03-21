@@ -23,9 +23,6 @@ export function convertIntegerToIp(ipInt: number) {
     );
 }
 
-export function formatTime(time: string) {
-    return moment(time).format(config.time.format);
-}
 
 
 
@@ -66,8 +63,8 @@ export function buildSQLStatement(searchQuery: any) {
                 if (typeof columnObject.conversion !== "undefined") {
                     if (columnObject.conversion.type === "DATE") {
                         queryBuilder.whereBetween(objKey, [
-                            formatTime(firstSeparatorValue),
-                            formatTime(secondSeparatorValue)
+                            TimeHelper.formatYearMonthAndDay(firstSeparatorValue),
+                            TimeHelper.formatYearMonthAndDay(secondSeparatorValue)
                         ]);
                     } 
                 } else {
@@ -81,7 +78,7 @@ export function buildSQLStatement(searchQuery: any) {
             } else {
                 if (typeof columnObject.conversion !== "undefined") {
                     if (columnObject.conversion.type === "DATE") {
-                        queryBuilder.whereBetween(objKey, [formatTime(objValue), formatTime2(objValue, 1)])
+                        queryBuilder.whereBetween(objKey, [TimeHelper.formatYearMonthAndDay(objValue), TimeHelper.addSecondsToTime(objValue, 86399)])
     
                     }
                 } else {
@@ -108,6 +105,15 @@ export function buildSQLStatement(searchQuery: any) {
 function getColumn(columnName: string): SQLColumn {
     return config.database.columns.find((column: SQLColumn) => column.name === columnName);
 }
-export function formatTime2(time: string, howMuchToAdd: number) {
-    return moment(time).add(howMuchToAdd, 'second').format(config.time.format);
+
+
+class TimeHelper {
+
+    static formatYearMonthAndDay(time: string) {
+        return moment(time).format("YYYY-MM-DD HH:mm:ss");
+    }
+
+    static addSecondsToTime(time: string, seconds: number) {
+        return moment(time).add(seconds, 'second').format("YYYY-MM-DD HH:mm:ss");
+    }
 }

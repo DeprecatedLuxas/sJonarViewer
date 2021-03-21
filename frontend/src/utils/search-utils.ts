@@ -106,7 +106,7 @@ export function convertObjectToSearch(obj: any) {
         if (doesHaveConversionObject) {
             switch (columnObj.conversion?.type) {
                 case "DATE":
-                    array[1] = `"${array[1]}"`;
+                    array[1] = `${array[1]}`;
                     returnedArray.push(array.join(":"));
                     break;
                 case "INTIP":
@@ -123,12 +123,12 @@ export function convertObjectToSearch(obj: any) {
     return returnedArray.join(" ");
 }
 
-export function buildNewSearch(searchQuery: string, dataValue: string, dataKey: string) {
+export function buildNewSearch(searchQuery: string, value: string | boolean | number, key: string) {
     const parsedSearchQuery = JSON.parse(decodeURIComponent(searchQuery));
     const NewObject = {}
     
     // @ts-ignore
-    NewObject[dataKey.toLowerCase()] = decodeURIComponent(dataValue);
+    NewObject[key.toLowerCase()] = decodeURIComponent(value);
     return `search?query=${encodeSearch(JSON.stringify(merge(parsedSearchQuery, NewObject)))}`;
 }
 

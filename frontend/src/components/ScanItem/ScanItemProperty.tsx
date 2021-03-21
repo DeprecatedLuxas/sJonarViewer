@@ -1,15 +1,10 @@
-import React, {Component, MouseEventHandler} from "react";
+import React, {Component} from "react";
 import styled from "styled-components";
 import {buildNewSearch, parseString} from "../../utils";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { v4 as uuidv4 } from "uuid";
 
-
-const ScanItemDiv = styled.div`
-    &:hover {
-        
-    }
-
-`;
+const ScanItemDiv = styled.div``;
 const ScanItemValue = styled.span`
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -24,8 +19,6 @@ interface ScanItemPropertyProps extends RouteComponentProps<any> {
             key: string,
             value: boolean | string | number
         },
-        dataValue: string,
-        dataKey: string,
         searchQuery: string
     }
 }
@@ -34,48 +27,34 @@ interface ScanItemPropertyProps extends RouteComponentProps<any> {
 
 
 class ScanItemProperty extends Component<ScanItemPropertyProps, any> {
-
-
-
-
    
     redoSearch = (event: React.MouseEvent) => { 
 
         const {
-            dataKey,
-            dataValue,
+            properties,
             searchQuery
         } = this.props.query;
-        const url = buildNewSearch(searchQuery, dataValue, dataKey);
+        const { key, value } = properties;
+        const url = buildNewSearch(searchQuery, value, key);
         const metaKeyPressed = event.ctrlKey
-
+        console.log(url)
         if (metaKeyPressed) {
             window.open(url);
         } else {
-    
-            // @ts-ignore
             this.props.history.push(url)
         }
     }
 
 
     render() {
-        const {
-            dataValue,
-            dataKey,
-            properties,
+        const { key, value } = this.props.query.properties;
 
-        } = this.props.query;
-        let {
-            key,
-            value
-        } = properties;
         return (
-            <ScanItemDiv data-value={dataValue} data-key={dataKey} onClick={this.redoSearch}>
-                <ScanItemKey key={dataKey}>
+            <ScanItemDiv data-value={value} data-key={key} onClick={this.redoSearch}>
+                <ScanItemKey key={uuidv4()}>
                     {key}
                 </ScanItemKey>
-                <ScanItemValue key={dataValue}>
+                <ScanItemValue key={uuidv4()}>
                     {parseString(key, value)}
                 </ScanItemValue>
             </ScanItemDiv>

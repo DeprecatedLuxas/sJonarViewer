@@ -5,13 +5,12 @@ import {ScanItems} from "../../components/ScanItems/ScanItems";
 import * as _ from "lodash";
 import styled from 'styled-components'
 import Known from '../../components/Known/Known'
-import {
-    SQLColumn
-} from "../../types/sql-types"
+import { SQLColumn } from "../../types/sql-types"
 import {convertObjectToSearch, getParameterByName, parseSearchBar, verifyUser, encodeSearch, decodeSearch} from "../../utils";
 import config from "@config";
 import CsvDownload from "../../components/Csv/CsvDownload";
-import {ErrorMessage} from "../../components/Error/ErrorMessage"
+import { ErrorMessage } from "../../components/Error/ErrorMessage"
+import { Header } from "../../components/Header/Header";
 const StyledHomeContainer = styled.div`
     width: 100%;
     height: 100%;
@@ -163,7 +162,7 @@ class Home extends React.Component<any, HomePageState> {
             <StyledHomeContainer>
                 <div>
                     <SearchContainer>
-                        <h1 style={{textAlign: "center"}}>sJonar</h1>
+                        <Header onClick={() => this.props.history.push("/")}>sJonar</Header>
                         <SearchForm onSubmit={this.retrieveData} error={errorOccurred}>
                             <input
                                 type="text"

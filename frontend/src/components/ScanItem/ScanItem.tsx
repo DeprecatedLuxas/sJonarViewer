@@ -3,8 +3,8 @@ import React, {Component} from "react";
 import styled from 'styled-components'
 import 'tippy.js/dist/tippy.css';
 import ScanItemProperty from "./ScanItemProperty";
-import {formatTime} from "../../utils";
-
+import {formatYearAndDayAndMonth} from "../../utils";
+import { v4 as uuidv4 } from "uuid";
 const ScanItemContainer = styled.div`
     width: 90%;
     border: 2px solid rgba(82, 75, 71, 0.4);
@@ -54,25 +54,22 @@ class ScanItem extends Component<ScanItemProps, any> {
         return (
             <ScanItemContainer key={properties[0].key}>
                 {properties && properties.length > 0 ? properties.map((scan: any) => {
-                    let dataValue = scan.value;
-                    let dataKey = scan.key;
-                    if (dataKey === "SCANDATE") {
-                        dataValue = formatTime(dataValue);
+                    if (scan.key === "SCANDATE") {
+                        scan.value = formatYearAndDayAndMonth(scan.value);
                     }
                     return (
                         <ScanItemProperty
                                          
                                          query={{
                                             properties: {
-                                                key: scan.key,
-                                                value: scan.value
+                                                key: (scan.key !== "Couldn't get data" ? encodeURIComponent(scan.key) : "invalid"),
+                                                value: (scan.value !== "Couldn't get data" ? encodeURIComponent(scan.value) : "invalid")
                                             },
-                                            dataValue: (dataValue !== "Couldn't get data" ? encodeURIComponent(dataValue) : "invalid"),
-                                            dataKey: (dataKey !== "Couldn't get data" ? encodeURIComponent(dataKey) : "invalid"),
+                
                                             searchBar: searchBar,
                                             searchQuery: searchQuery
                                         }}
-                                        key={scan.key}/>
+                                        key={uuidv4()}/>
                     );
                 }) : ''}
             </ScanItemContainer>

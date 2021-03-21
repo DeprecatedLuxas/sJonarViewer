@@ -3,7 +3,7 @@ import {Router} from 'express';
 const router = Router();
 
 
-router.get("/", (req, res) => {
+router.get("/", (_: any, res: any) => {
     res.json({
         knowns: [
             {

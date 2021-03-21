@@ -1,5 +1,4 @@
 import React from "react";
-import * as _ from "lodash";
 import styled from 'styled-components'
 import Known from '../../components/Known/Known'
 import {verifyUser} from "../../utils";
@@ -23,19 +22,11 @@ class KnownsPage extends React.Component<any, any> {
 
     render() {
         return (
-            
             <StyledKnownsContainer>
-             
                 <>
-                
                     <Known usingSort={true} usingMaxKnowns={false} goBackButton={true}/>
                 </>
-
-
-
-
             </StyledKnownsContainer>
-
         );
     }
 }

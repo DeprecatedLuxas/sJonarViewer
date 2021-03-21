@@ -11,7 +11,7 @@ import {
 import {convertObjectToSearch, getParameterByName, parseSearchBar, verifyUser, encodeSearch, decodeSearch} from "../../utils";
 import config from "@config";
 import CsvDownload from "../../components/Csv/CsvDownload";
-
+import { Header } from "../../components/Header/Header"; 
 const StyledSearchContainer = styled.div`
     width: 100%;
     height: 100%;
@@ -140,8 +140,9 @@ class SearchPage extends React.Component<any, SearchPageState> {
                 });
                 return;
             }
-
-            const response = await axios.get(`/api/search?query=${encodeSearch(`${JSON.stringify(parsedStateSearch)}`)}`);
+            const url = encodeSearch(JSON.stringify(parsedStateSearch))
+            this.props.history.push(`search?query=${url}`);
+            const response = await axios.get(`/api/search?query=${url}`);
             this.setState({
                 scans: response.data.scans,
                 searchQuery: encodeURIComponent(JSON.stringify(parsedStateSearch)),
@@ -171,7 +172,7 @@ class SearchPage extends React.Component<any, SearchPageState> {
             <StyledSearchContainer>
                 <div>
                     <SearchContainer>
-                        <h1 style={{textAlign: "center"}}>sJonar</h1>
+                        <Header onClick={() => this.props.history.push("/")}>sJonar</Header>
                         <SearchForm onSubmit={this.retrieveData} error={errorOccurred}>
                             <input
                                 type="text"
