@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {ErrorMessage} from '../Error/ErrorMessage'
+import {ErrorMessage} from '../Message/ErrorMessage'
 
 const userValidationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required!"),
@@ -101,7 +101,7 @@ const LoginFormContainer = styled.div`
 `;
 
 type UserLoginFormProps = {onSuccessValidation: any, loginError: string};
-const UserLoginForm = ({onSuccessValidation, loginError}: UserLoginFormProps) => {
+export const UserLoginForm: React.FC<any> = ({onSuccessValidation, loginError}: UserLoginFormProps) => {
 
     const { handleSubmit, handleChange, values, errors, touched } = useFormik({
         initialValues: {
@@ -145,11 +145,10 @@ const UserLoginForm = ({onSuccessValidation, loginError}: UserLoginFormProps) =>
                 {errors.password && touched.password ? (
                     <ErrorMessage>{errors.password}</ErrorMessage>
                 ) : null}
-                {loginError ? <ErrorMessage>{loginError}</ErrorMessage>: null}
+                {loginError ? <ErrorMessage>{loginError}</ErrorMessage> : null}
                 <LoginButton type="submit">Login</LoginButton>
             </LoginForm>
         </LoginFormContainer>
     );
 }
 
-export default UserLoginForm;

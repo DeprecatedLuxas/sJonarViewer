@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import axios from "axios";
-import UserLoginForm from "../../components/Login/Login";
+import { UserLoginForm } from "../../components/Login/Login";
+import { verifyUser } from "../../utils";
 
 
 type LoginState = {
@@ -14,6 +15,10 @@ class Login extends Component<any, LoginState> {
         this.state = {
             loginError: "",
         };
+    }
+
+    componentDidMount() {
+        verifyUser(this.props);
     }
 
     onSubmit = async (data: any) => {
@@ -41,6 +46,8 @@ class Login extends Component<any, LoginState> {
             this.setState({ loginError: error.message });
         }
     };
+
+    
 
     render() {
         const { loginError } = this.state;

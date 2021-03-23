@@ -10,7 +10,7 @@ export const SearchForm = styled.form`
     flex-direction: row;
     width: 90%;
     margin: 10px auto;
-    padding: 30px;
+    padding: 10px;
     
     input {
         flex: 1;

@@ -23,9 +23,6 @@ export function convertIntegerToIp(ipInt: number) {
     );
 }
 
-
-
-
 export function merge<A, B>(a: A, b: B): A | B {
     return Object.assign({}, a, b);
 }
@@ -37,7 +34,7 @@ export function getColumns() {
 
 
 
-export function buildSQLStatement(searchQuery: any) {
+export function buildSQLStatement(searchQuery: any, withLimit: boolean = true, offset?: number) {
     let queryBuilder = database.select(getColumns()).from(config.database.table);
     let objKey: string;
     let objKeyUppercase: string; // Used to find the column details.
@@ -51,7 +48,7 @@ export function buildSQLStatement(searchQuery: any) {
         columnObject = getColumn(objKeyUppercase);
         // When there was no column found.
         if (!columnObject) {
-            console.error("There was no column named after objKeyUppercase")
+            throw new Error("Object key is not found error?")
         }
 
         if (columnObject.settings.isRange) {
@@ -98,7 +95,12 @@ export function buildSQLStatement(searchQuery: any) {
 
         }
     });
-    queryBuilder.limit(config.database.returnLimit);
+    if (withLimit) {
+        queryBuilder.limit(config.database.returnLimit);
+    }
+    if (offset) {
+        queryBuilder.offset(offset);
+    }
     return queryBuilder;
 }
 

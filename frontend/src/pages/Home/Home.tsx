@@ -1,16 +1,21 @@
-import React, {FormEvent} from "react";
-import {SearchButton, SearchForm,} from "../../components/SearchForm/SearchForm";
-import ScanItem from "../../components/ScanItem/ScanItem";
-import {ScanItems} from "../../components/ScanItems/ScanItems";
-import * as _ from "lodash";
-import styled from 'styled-components'
-import Known from '../../components/Known/Known'
-import { SQLColumn } from "../../types/sql-types"
-import {convertObjectToSearch, getParameterByName, parseSearchBar, verifyUser, encodeSearch, decodeSearch} from "../../utils";
-import config from "@config";
-import CsvDownload from "../../components/Csv/CsvDownload";
-import { ErrorMessage } from "../../components/Error/ErrorMessage"
+import React, { FormEvent } from "react";
+import {
+    SearchButton,
+    SearchForm,
+} from "../../components/SearchForm/SearchForm";
+import _ from "lodash";
+import styled from "styled-components";
+import {
+    convertObjectToSearch,
+    getParameterByName,
+    parseSearchBar,
+    verifyUser,
+    encodeSearch,
+    decodeSearch,
+} from "../../utils";
+import { ErrorMessage } from "../../components/Message/ErrorMessage";
 import { Header } from "../../components/Header/Header";
+import Knowns from "../../components/Known/Knowns";
 const StyledHomeContainer = styled.div`
     width: 100%;
     height: 100%;
@@ -40,60 +45,63 @@ const SearchContainer = styled.div`
             display: -webkit-flex;
             justify-content: space-between;
             margin: 0 0 10px 0;
-   
         }
     }
 `;
 
 type HomePageState = {
-    query: string,
-    searchQuery: string,
-    scans: SQLColumn[],
-    search: string,
-    loading: boolean,
-    errorOccurred: boolean,
-    errorMessage: string
-}
-
+    query: string;
+    searchQuery: string;
+    search: string;
+    loading: boolean;
+    errorOccurred: boolean;
+    errorMessage: string;
+};
 
 class Home extends React.Component<any, HomePageState> {
-
-
     constructor(props: any) {
         super(props);
         this.state = {
             query: "",
             // @ts-ignore
-            searchQuery: getParameterByName("querySearch", this.props.history.location.search) || "",
-            scans: [],
+            searchQuery:
+                getParameterByName(
+                    "querySearch",
+                    this.props.history.location.search
+                ) || "",
             // @ts-ignore
-            search: getParameterByName("searchBar", this.props.history.location.search) || "",
+            search:
+                getParameterByName(
+                    "searchBar",
+                    this.props.history.location.search
+                ) || "",
             loading: false,
             errorOccurred: false,
             errorMessage: "",
-        }
+        };
     }
 
     componentDidMount() {
         // Verifying the user cookie.
         verifyUser(this.props);
-        
-        
+
         const queryParameters = new URLSearchParams(this.props.location.search);
 
         const queryParameter = queryParameters.get("query");
         if (queryParameter !== null) {
-            const parsedDecodedSearch = JSON.parse(decodeSearch(queryParameter))
-            this.setState({
-                search: convertObjectToSearch(parsedDecodedSearch)
-            }, () => {
-                this.retrieveData()
-            })
+            const parsedDecodedSearch = JSON.parse(
+                decodeSearch(queryParameter)
+            );
+            this.setState(
+                {
+                    search: convertObjectToSearch(parsedDecodedSearch),
+                },
+                () => {
+                    this.retrieveData();
+                }
+            );
         }
-
     }
-
-
 
     onSearchBarChange = (event: any) => {
         const inputSearch = event.target.value;
@@ -107,63 +115,65 @@ class Home extends React.Component<any, HomePageState> {
 
         // Prevents the search button from being clicked when a search is loading
         this.setState({
-            loading: true
+            loading: true,
         });
 
         try {
-            const {search} = this.state;
+            const { search } = this.state;
             if (_.isEmpty(search)) {
                 this.setState({
                     errorOccurred: true,
-                    errorMessage: "You cant submit an empty input search!"
+                    errorMessage: "You cant submit an empty input search!",
                 });
                 return;
             }
             const parsedStateSearch = parseSearchBar(search);
 
             if (_.isEmpty(parsedStateSearch)) {
-                
                 this.setState({
                     errorOccurred: true,
-                    errorMessage: "Your search input did not match any of the operators."
+                    errorMessage:
+                        "Your search input did not match any of the operators.",
                 });
                 return;
             }
             if (_.values(parsedStateSearch).every(_.isEmpty)) {
                 this.setState({
                     errorOccurred: true,
-                    errorMessage: "Your search operators need a value"
+                    errorMessage: "Your search operators need a value",
                 });
                 return;
             }
 
-            this.props.history.push(`search?query=${encodeSearch(`${JSON.stringify(parsedStateSearch)}`)}`)
-
-
+            this.props.history.push(
+                `search?query=${encodeSearch(
+                    `${JSON.stringify(parsedStateSearch)}`
+                )}`
+            );
         } catch (error) {
             this.setState({
                 errorOccurred: true,
-                errorMessage: error.message
+                errorMessage: error.message,
             });
         } finally {
-
             // Enables the search button again.
             this.setState({
-                loading: false
-            })
+                loading: false,
+            });
         }
-
-    }
-
+    };
 
     render() {
-        const {search, scans, errorMessage, loading, errorOccurred} = this.state;
+        const { search, errorMessage, loading, errorOccurred } = this.state;
         return (
             <StyledHomeContainer>
                 <div>
                     <SearchContainer>
-                        <Header onClick={() => this.props.history.push("/")}>sJonar</Header>
-                        <SearchForm onSubmit={this.retrieveData} error={errorOccurred}>
+                        <Header>sJonar</Header>
+                        <SearchForm
+                            onSubmit={this.retrieveData}
+                            error={errorOccurred}
+                        >
                             <input
                                 type="text"
                                 placeholder="Search by operators"
@@ -171,47 +181,19 @@ class Home extends React.Component<any, HomePageState> {
                                 onChange={this.onSearchBarChange}
                             />
 
-                            <SearchButton loading={loading ? 1 : 0}>Search</SearchButton>
-                            {
-                                scans && scans.length > 0 ? (
-                                    <CsvDownload scans={this.state.scans} name={config.csv.outputFileName} />
-                                ) : ''
-                            }
+                            <SearchButton loading={loading ? 1 : 0}>
+                                Search
+                            </SearchButton>
                         </SearchForm>
-                        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-
-
-
+                        {errorMessage && (
+                            <ErrorMessage>{errorMessage}</ErrorMessage>
+                        )}
                     </SearchContainer>
-                    <Known/>
                 </div>
-
-
-                <ScanItems key={"scanItems"}>
-        
-                    {scans.length > 0 ? scans.map((scan: SQLColumn) => {
-
-                        const queryObj = {
-                            searchBar: encodeURIComponent(this.state.search),
-                            properties: Object.keys(scan).map(e => ({key: e, value: scan[e]})),
-                            searchQuery: this.state.searchQuery
-                        }
-         
-                        return (
-                            <ScanItem key={scan[0]}
-                                query={queryObj} />
-                        )
-                    }) : ''}
-                </ScanItems>
-
+                <Knowns usingSort={true} />
             </StyledHomeContainer>
-
         );
     }
 }
 
-
 export default Home;
-
-
-

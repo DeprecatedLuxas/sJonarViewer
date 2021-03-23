@@ -10,7 +10,7 @@ import {
 const searchRegex = /(\S+:'(?:[^'\\]|\\.)*')|(\S+:"(?:[^"\\]|\\.)*")|(-?"(?:[^"\\]|\\.)*")|(-?'(?:[^'\\]|\\.)*')|\S+|\S+:\S+/g;
 
 
-export function parseSearchBar(searchBar: string) {
+export function parseSearchBar(searchBar: string, offset?: number) {
     let parsedSearchQuery: ISearchQuery = {};
     let keywords = getKeywords();
     let ranges = getRanges();
@@ -76,6 +76,9 @@ export function parseSearchBar(searchBar: string) {
             }
 
         }
+    }
+    if (offset !== undefined) {
+        parsedSearchQuery["offset"] = offset;
     }
     return parsedSearchQuery;
 }

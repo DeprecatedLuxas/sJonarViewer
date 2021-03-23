@@ -15,14 +15,14 @@ router.post("/", async (req, res) => {
             }).status(403);
         }
 
-        const isLoggedIn = await bcrypt.compareSync(password, user.password);
+        const isLoggedIn = bcrypt.compareSync(password, user.password);
         if (!isLoggedIn) {
             return res.send({
                 error: "Incorrect password"
             }).status(403);
         }
 
-        const token = await jwt.sign({ username }, config.jwt.secret, {
+        const token = jwt.sign({ username }, config.jwt.secret, {
             expiresIn: config.jwt.expiresIn
         });
         if (!token) {
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
             }).status(500);
         }
 
-        return res.cookie('token', token).status(200).send({ isLoggedIn })
+        return res.cookie('sJonarToken', token, {httpOnly: true, maxAge: 86400000, sameSite: 'lax', secure: true}).status(200).send({ isLoggedIn })
     } catch (error) {
         return res.status(500).send({ error: error.message })
     }

@@ -5,8 +5,8 @@ import config from "../../../../config.json";
 
 
 router.get("/", (req, res) => {
-    const { cookies: { token }} = req;
-    jwt.verify(token, config.jwt.secret, (err: VerifyErrors | null, decoded: object | undefined) => {
+    const { cookies: { sJonarToken }} = req;
+    jwt.verify(sJonarToken, config.jwt.secret, (err: VerifyErrors | null, decoded: object | undefined) => {
         res.send({
             isValidCookie: !(err || decoded === undefined)
         });
