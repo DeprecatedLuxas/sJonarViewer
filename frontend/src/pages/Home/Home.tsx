@@ -58,6 +58,18 @@ type HomePageState = {
     errorMessage: string;
 };
 
+interface HomeProps {
+    add: () => void;
+    remove: () => void;
+    known: {
+        name: string,
+        amount: number,
+        sslImplementationTested: string,
+        jarmHash: string,
+        link: string
+    }[]
+}
+
 class Home extends React.Component<any, HomePageState> {
     constructor(props: any) {
         super(props);
@@ -165,6 +177,7 @@ class Home extends React.Component<any, HomePageState> {
 
     render() {
         const { search, errorMessage, loading, errorOccurred } = this.state;
+
         return (
             <StyledHomeContainer>
                 <div>

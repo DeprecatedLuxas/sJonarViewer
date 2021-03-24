@@ -6,6 +6,18 @@ import axios from "axios";
 import Select from "react-select";
 import KnownItem from "./KnownItem";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { connect, DispatchProp } from "react-redux";
+
+import { RootState } from "../../redux/store";
+import * as KnownActions from "../../redux/knowns/actions";
+
+const mapStateToProps = (state: RootState) => ({
+    knowns: state.known.knowns.map((known) => ({
+        ...known,
+    })),
+});
+
+type StateProps = ReturnType<typeof mapStateToProps>;
 
 type KnownsObject = {
     [key: string]: string | number;
@@ -37,6 +49,8 @@ const sortTypes = [
     },
 ];
 
+type Props = StateProps & DispatchProp;
+
 class Knowns extends Component<any, KnownsState> {
     static propTypes: {
         usingSort: PropTypes.Requireable<boolean>;
@@ -56,11 +70,29 @@ class Knowns extends Component<any, KnownsState> {
             sort: "name",
             loading: false,
         };
-
     }
 
     componentDidMount() {
-        this.refreshKnowns();
+        const { dispatch } = this.props as Props;
+        this.setState({
+            loading: true,
+        });
+        try {
+            axios
+                .get("/api/known")
+                .then((response) => {
+                    dispatch(KnownActions.setKnowns(response.data));
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } catch (err) {
+            console.log(err);
+        } finally {
+            this.setState({
+                loading: false,
+            });
+        }
     }
 
     sortArray = (selected: any) => {
@@ -71,31 +103,12 @@ class Knowns extends Component<any, KnownsState> {
         });
     };
 
-    refreshKnowns = async () => {
-        this.setState({
-            loading: true,
-        });
-
-        try {
-            const response = await axios.get("/api/known");
-            this.setState({
-                knowns: response.data.knowns,
-            });
-        } catch (err) {
-            console.log(err);
-        } finally {
-            this.setState({
-                loading: false,
-            });
-        }
-    };
-
     render() {
-        const { knowns, loading } = this.state;
         const { sort } = this.props;
+        const { knowns } = this.props as Props;
         return (
             <div>
-                {loading ? (
+                {this.state.loading ? (
                     <div style={{ margin: "100px 0", textAlign: "center" }}>
                         <ScaleLoader />
                     </div>
@@ -151,4 +164,4 @@ Knowns.defaultProps = {
     refreshButton: true,
 };
 
-export default Knowns;
+export default connect(mapStateToProps)(Knowns);
