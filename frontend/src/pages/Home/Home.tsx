@@ -7,25 +7,26 @@ import _ from "lodash";
 import styled from "styled-components";
 import {
     convertObjectToSearch,
-    getParameterByName,
     parseSearchBar,
     verifyUser,
     encodeSearch,
     decodeSearch,
 } from "../../utils";
-import { ErrorMessage } from "../../components/Message/ErrorMessage";
+
 import { Header } from "../../components/Header/Header";
 import Knowns from "../../components/Known/Knowns";
+
+import { Alert } from "react-bs-notifier";
 const StyledHomeContainer = styled.div`
     width: 100%;
     height: 100%;
 `;
-const SearchContainer = styled.div`
-    width: 800px;
+const SearchContainer = styled.div` 
+    width: 50%;
     margin: 20px auto;
     background: #ffffff;
     box-shadow: 0px 14px 80px rgb(34 35 58 / 20%);
-    padding: 40px 55px 45px 55px;
+    padding: 20px 25px 20px 25px;
     border-radius: 15px;
     transition: all 0.3s;
 
@@ -51,7 +52,6 @@ const SearchContainer = styled.div`
 
 type HomePageState = {
     query: string;
-    searchQuery: string;
     search: string;
     loading: boolean;
     errorOccurred: boolean;
@@ -63,18 +63,7 @@ class Home extends React.Component<any, HomePageState> {
         super(props);
         this.state = {
             query: "",
-            // @ts-ignore
-            searchQuery:
-                getParameterByName(
-                    "querySearch",
-                    this.props.history.location.search
-                ) || "",
-            // @ts-ignore
-            search:
-                getParameterByName(
-                    "searchBar",
-                    this.props.history.location.search
-                ) || "",
+            search: "",
             loading: false,
             errorOccurred: false,
             errorMessage: "",
@@ -130,6 +119,7 @@ class Home extends React.Component<any, HomePageState> {
             const parsedStateSearch = parseSearchBar(search);
 
             if (_.isEmpty(parsedStateSearch)) {
+                console.log(parsedStateSearch)
                 this.setState({
                     errorOccurred: true,
                     errorMessage:
@@ -137,6 +127,7 @@ class Home extends React.Component<any, HomePageState> {
                 });
                 return;
             }
+
             if (_.values(parsedStateSearch).every(_.isEmpty)) {
                 this.setState({
                     errorOccurred: true,
@@ -164,7 +155,8 @@ class Home extends React.Component<any, HomePageState> {
     };
 
     render() {
-        const { search, errorMessage, loading, errorOccurred } = this.state;
+        const { search, loading, errorOccurred, errorMessage } = this.state;
+
         return (
             <StyledHomeContainer>
                 <div>
@@ -185,9 +177,11 @@ class Home extends React.Component<any, HomePageState> {
                                 Search
                             </SearchButton>
                         </SearchForm>
-                        {errorMessage && (
-                            <ErrorMessage>{errorMessage}</ErrorMessage>
-                        )}
+                        <div style={{width: "50%", margin: "0 auto"}}>
+                            {errorOccurred && (
+                                <Alert type="danger">{errorMessage}</Alert>
+                            )}
+                        </div>
                     </SearchContainer>
                 </div>
                 <Knowns usingSort={true} />

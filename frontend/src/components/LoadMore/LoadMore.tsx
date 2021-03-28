@@ -1,19 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 
-
 type LoadMoreProps = {
-    loading: number
-}
+    loading: number;
+};
 
 const StyledLoadMore = styled.button.attrs((props: LoadMoreProps) => ({
-    disabled: props.loading
+    disabled: props.loading,
 }))<LoadMoreProps>`
+    cursor: pointer;
     background: #007bff;
     border: 0;
+    height: 40px;
     color: white;
     padding: 0 15px;
-    margin: 0 10px;
+    margin: 40px auto;
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -21,11 +22,15 @@ const StyledLoadMore = styled.button.attrs((props: LoadMoreProps) => ({
     outline: none;
     &[disabled] {
         cursor: not-allowed;
-        
-        background: rgba(255,53,80,0.4);
+
+        background: rgba(255, 53, 80, 0.4);
     }
 `;
 
 export const LoadMore: React.FC<any> = ({ children, onClick, loading }) => {
-    return <StyledLoadMore loading={loading} onClick={onClick}>{children}</StyledLoadMore>;
+    return (
+        <StyledLoadMore loading={loading} onClick={onClick}>
+            {children}
+        </StyledLoadMore>
+    );
 };

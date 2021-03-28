@@ -2,27 +2,19 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { buildNewSearch } from "../../utils";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-const KnownItemContainer = styled.div`
+import { KnownProperty } from "./KnownProperty";
+const StyledKnown = styled.div`
     margin: 10px;
-    width: 350px;
+    min-width: 200px;
     background-color: #ffffff;
-    border-radius: 15px;
-    border: 2px solid rgba(82, 75, 71, 0.4);
+    min-height: 100px;
+    border-radius: 10px;
+
     transition: transform 0.3s ease;
     box-shadow: 6px 5px 5px rgba(92, 69, 82, 0.4);
     &:hover {
         transform: translateY(-5px);
     }
-    
-`;
-const KnownItemProperty = styled.div`
-    margin-top: 5px;
-    padding: 5px;
-`;
-const KnownItemPropertyKey = styled.h4``;
-const KnownItemPropertyValue = styled.span`
-    white-space: pre-wrap;
-    word-wrap: break-word;
 `;
 const KnownItemHeaderContainer = styled.div`
     position: relative;
@@ -30,33 +22,37 @@ const KnownItemHeaderContainer = styled.div`
 
 const KnownItemAmount = styled.a`
     position: absolute;
-    padding: 2px;
+    padding: 5px;
     color: white;
     background-color: #007bff;
     border: 1px solid rgba(82, 75, 71, 0.4);
     border-radius: 10px;
-    left: 20px;
-    top: 4px;
+    right: 5px;
+    top: 5px;
 `;
 
 const KnownItemHeader = styled.h3`
     text-align: center;
-    padding: 5px 0;
+    padding: 5px 15px;
+    height: 50px;
 `;
 const KnownItemButtonContainer = styled.div`
     display: flex;
     justify-content: space-between;
     padding: 10px;
+
     @media only screen and (max-width: 600px) {
         flex-direction: column;
+        align-items: center;
     }
     @media only screen and (max-width: 1200px) {
         flex-direction: column;
+        align-items: center;
     }
 `;
 
 const KnownItemButton = styled.a`
-    cursor: pointer;
+cursor: pointer;
     width: 60%;
     margin: 5px;
 
@@ -65,7 +61,7 @@ const KnownItemButton = styled.a`
     background-color: #007bff;
     border-color: #007bff;
     color: #fff;
-    border: 1px solid transparent;
+    border: 1px solid transparent; 
     border-radius: 6px;
     text-decoration: none;
 `;
@@ -106,23 +102,19 @@ class KnownItem extends Component<KnownItemProps, any> {
             link,
         } = this.props.known;
         return (
-            <KnownItemContainer>
+            <StyledKnown>
                 <KnownItemHeaderContainer>
                     <KnownItemAmount>{amount}</KnownItemAmount>
                     <KnownItemHeader>{name}</KnownItemHeader>
                 </KnownItemHeaderContainer>
-                <KnownItemProperty>
-                    <KnownItemPropertyKey>Jarmhash</KnownItemPropertyKey>
-                    <KnownItemPropertyValue>{jarmHash}</KnownItemPropertyValue>
-                </KnownItemProperty>
-                <KnownItemProperty>
-                    <KnownItemPropertyKey>
-                        SSL Implementation Tested
-                    </KnownItemPropertyKey>
-                    <KnownItemPropertyValue>
-                        {sslImplementationTested}
-                    </KnownItemPropertyValue>
-                </KnownItemProperty>
+                <KnownProperty
+                    propertyKey="Jarmhash"
+                    propertyValue={jarmHash}
+                />
+                <KnownProperty
+                    propertyKey="SSL Implementation Tested"
+                    propertyValue={sslImplementationTested}
+                />
 
                 <KnownItemButtonContainer>
                     <KnownItemButton
@@ -135,7 +127,7 @@ class KnownItem extends Component<KnownItemProps, any> {
                         Search for jarm
                     </KnownItemButton>
                 </KnownItemButtonContainer>
-            </KnownItemContainer>
+            </StyledKnown>
         );
     }
 }

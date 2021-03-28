@@ -21,7 +21,6 @@ export function parseSearchBar(searchBar: string, offset?: number) {
     while ((keywordFinder = getQueryOperatorsInSearchBar(searchBar)) !== null) {
         match = keywordFinder[0];
         const splitIndex = match.indexOf(":");
-
         // Check if there is a semicolon in the string.
         if (splitIndex !== -1) {
             // Getting the value before the split.
@@ -31,13 +30,13 @@ export function parseSearchBar(searchBar: string, offset?: number) {
 
             matchedKeywords.push({
                 keyword: matchedKeywordKey,
-                value: stripStringForQuotes(matchedKeywordValue),
+                value: sanitizeValue(matchedKeywordValue),
                 isConditional: isColumnConditional(matchedKeywordKey.toUpperCase())!
             });
 
         }
     }
-
+    
     // Sorts the array so the ones without the isConditional parameter set to false is always first
     matchedKeywords = matchedKeywords.sort((matchedKeyword: IMatchedKeyword) => {
         return matchedKeyword.isConditional ? -1 : 1;
@@ -89,8 +88,9 @@ function getQueryOperatorsInSearchBar(searchBarValue: string) {
 }
 
 
-function stripStringForQuotes(string: string) {
-    return string.replace(/["']/g, "");
+
+function sanitizeValue(value: string) {
+    return value.replace(/["'<>]/g, "")
 }
 
 

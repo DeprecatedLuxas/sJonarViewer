@@ -1,16 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
-import {useFormik} from "formik";
-import {ErrorMessage} from '../Message/ErrorMessage'
-
+import { useFormik } from "formik";
+import { Alert } from "react-bs-notifier";
 const userValidationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required!"),
     password: Yup.string().required("Password is required!"),
 });
-
-
-
 
 const LoginButton = styled.button`
     width: 100%;
@@ -100,10 +96,27 @@ const LoginFormContainer = styled.div`
     align-items: center;
 `;
 
-type UserLoginFormProps = {onSuccessValidation: any, loginError: string};
-export const UserLoginForm: React.FC<any> = ({onSuccessValidation, loginError}: UserLoginFormProps) => {
+function getError(username: any, password: any, login: any) {
+    let message: string = "";
+    if (username && password) {
+        message = "Username & Password is required!";
+    } else if (username) {
+        message = "Username is required!";
+    } else if (password) {
+        message = "Password is required!";
+    } else {
+        message = login;
+    }
 
-    const { handleSubmit, handleChange, values, errors, touched } = useFormik({
+    return message;
+}
+
+type UserLoginFormProps = { onSuccessValidation: any; loginError: string };
+export const UserLoginForm: React.FC<any> = ({
+    onSuccessValidation,
+    loginError,
+}: UserLoginFormProps) => {
+    const { handleSubmit, handleChange, values, errors } = useFormik({
         initialValues: {
             username: "",
             password: "",
@@ -111,7 +124,7 @@ export const UserLoginForm: React.FC<any> = ({onSuccessValidation, loginError}: 
         validationSchema: userValidationSchema,
         onSubmit: (values) => {
             onSuccessValidation(values);
-        }
+        },
     });
 
     return (
@@ -139,16 +152,14 @@ export const UserLoginForm: React.FC<any> = ({onSuccessValidation, loginError}: 
                         onChange={handleChange}
                     />
                 </LoginInputContainer>
-                {errors.username && touched.username ? (
-                    <ErrorMessage>{errors.username}</ErrorMessage>
+                {getError(errors.username, errors.password, loginError) !==
+                "" ? (
+                    <Alert type="danger">
+                        {getError(errors.username, errors.password, loginError)}
+                    </Alert>
                 ) : null}
-                {errors.password && touched.password ? (
-                    <ErrorMessage>{errors.password}</ErrorMessage>
-                ) : null}
-                {loginError ? <ErrorMessage>{loginError}</ErrorMessage> : null}
                 <LoginButton type="submit">Login</LoginButton>
             </LoginForm>
         </LoginFormContainer>
     );
-}
-
+};

@@ -2,10 +2,27 @@ import { Component } from "react";
 import { v4 as uuidv4 } from "uuid";
 import * as PropTypes from "prop-types";
 import { sortValues } from "../../utils";
-import axios from "axios";
 import Select from "react-select";
-import KnownItem from "./KnownItem";
+import KnownItem from "./Known";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import styled from "styled-components";
+import { connect } from "react-redux";
+import { GetKnowns } from "../../redux/actions/KnownsActions";
+import { RootStore } from "../../redux/store";
+const Container = styled.div`
+    width: 60%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    @media only screen and (max-width: 600px) {
+        grid-template-columns: 1fr;
+    }
+
+    @media only screen and (max-width: 992px) {
+        grid-template-columns: 1fr 1fr;
+    }
+`;
 
 type KnownsObject = {
     [key: string]: string | number;
@@ -35,7 +52,10 @@ const sortTypes = [
         label: "Sorting after SSL Implementation Tested",
         value: "sslImplementationTested",
     },
+    { label: "Sorting after id", value: "id" },
+    { label: "Sorting after amount", value: "amount" },
 ];
+
 
 class Knowns extends Component<any, KnownsState> {
     static propTypes: {
@@ -56,11 +76,10 @@ class Knowns extends Component<any, KnownsState> {
             sort: "name",
             loading: false,
         };
-
     }
 
     componentDidMount() {
-        this.refreshKnowns();
+        this.props.dispatch(GetKnowns());
     }
 
     sortArray = (selected: any) => {
@@ -71,31 +90,11 @@ class Knowns extends Component<any, KnownsState> {
         });
     };
 
-    refreshKnowns = async () => {
-        this.setState({
-            loading: true,
-        });
-
-        try {
-            const response = await axios.get("/api/known");
-            this.setState({
-                knowns: response.data.knowns,
-            });
-        } catch (err) {
-            console.log(err);
-        } finally {
-            this.setState({
-                loading: false,
-            });
-        }
-    };
-
     render() {
-        const { knowns, loading } = this.state;
-        const { sort } = this.props;
+        const { sort, knowns } = this.props;
         return (
             <div>
-                {loading ? (
+                {knowns.loading ? (
                     <div style={{ margin: "100px 0", textAlign: "center" }}>
                         <ScaleLoader />
                     </div>
@@ -113,17 +112,9 @@ class Knowns extends Component<any, KnownsState> {
                             }
                         />
 
-                        <div
-                            style={{
-                                width: "80%",
-                                margin: "0 auto",
-                                display: "flex",
-                                flexFlow: "row wrap",
-                                justifyContent: "space-around",
-                            }}
-                        >
-                            {knowns && knowns.length > 0
-                                ? knowns.map((known: any) => {
+                        <Container>
+                            {knowns.knowns && knowns.knowns.length > 0
+                                ? knowns.knowns.map((known: any) => {
                                       return (
                                           <KnownItem
                                               known={known}
@@ -132,7 +123,7 @@ class Knowns extends Component<any, KnownsState> {
                                       );
                                   })
                                 : ""}
-                        </div>
+                        </Container>
                     </>
                 )}
             </div>
@@ -151,4 +142,8 @@ Knowns.defaultProps = {
     refreshButton: true,
 };
 
-export default Knowns;
+const mapState = (state: RootStore) => ({
+    knowns: state.knowns,
+});
+
+export default connect(mapState)(Knowns);
