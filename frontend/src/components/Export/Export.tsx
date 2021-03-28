@@ -19,7 +19,7 @@ export const Export: React.FC<ExportProps> = ({ scans, name }) => {
                 justifyContent: "center",
             }}
         >
-            <FaFileCsv color="#007bff" size="1.5em" />
+            <FaFileCsv color="#007bff" size="1.75em" />
         </CSVLink>
     );
 };

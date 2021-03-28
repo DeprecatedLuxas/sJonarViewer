@@ -1,13 +1,11 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import { UserLoginForm } from "../../components/Login/Login";
 import { verifyUser } from "../../utils";
 
-
 type LoginState = {
-    loginError: string
-}
-
+    loginError: string;
+};
 
 class Login extends Component<any, LoginState> {
     constructor(props: any) {
@@ -41,23 +39,18 @@ class Login extends Component<any, LoginState> {
             } else {
                 this.props.history.push("/");
             }
-
         } catch (error) {
             this.setState({ loginError: error.message });
         }
     };
 
-    
-
     render() {
         const { loginError } = this.state;
         return (
-            <Fragment>
-                <UserLoginForm
-                    onSuccessValidation={this.onSubmit}
-                    loginError={loginError}
-                />
-            </Fragment>
+            <UserLoginForm
+                onSuccessValidation={this.onSubmit}
+                loginError={loginError}
+            />
         );
     }
 }

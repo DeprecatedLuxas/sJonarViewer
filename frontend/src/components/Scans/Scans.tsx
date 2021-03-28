@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-export const StyledScans = styled.div`
+const StyledScans = styled.div`
     width: 100%;
 
     margin: 5px 0;
 `;
 
-export const Scans: React.FC<any> = ({ children }) => {
-    return <StyledScans>{children}</StyledScans>;
-};
+export const Scans: React.FC<{ children: any }> = ({ children }) => (
+    <StyledScans>{children}</StyledScans>
+);

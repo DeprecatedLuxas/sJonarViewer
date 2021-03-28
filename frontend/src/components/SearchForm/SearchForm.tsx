@@ -39,7 +39,7 @@ type SearchButtonProps = {
 export const SearchButton = styled.button.attrs((props: SearchButtonProps) => ({
     disabled: props.loading
 }))<SearchButtonProps>`
-    
+    cursor: pointer;
     background: #007bff;
     border: 0;
     color: white;

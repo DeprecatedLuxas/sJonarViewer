@@ -1,31 +1,10 @@
-import { createStore, combineReducers, applyMiddleware, compose } from "redux";
+import {createStore, applyMiddleware} from "redux";
+import RootReducer from "./reducers/RootReducer";
+import {composeWithDevTools} from "redux-devtools-extension";
 import thunk from "redux-thunk";
-import ReturnType from "typescript";
 
-import knownReducer from "./knowns/reducer";
-const initialState = {};
-const middleware = [thunk];
+const Store = createStore(RootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
-// Redux Devtools
-declare global {
-    interface Window {
-        __REDUX_DEVTOOLS_EXTENSION__?: typeof compose;
-    }
-}
+export type RootStore = ReturnType<typeof RootReducer>
 
-const reducer = combineReducers({
-    known: knownReducer,
-});
-
-export type RootState = ReturnType<typeof reducer>;
-
-const store = createStore(
-    reducer,
-    initialState,
-    compose(
-        applyMiddleware(...middleware),
-        (window.__REDUX_DEVTOOLS_EXTENSION__ &&
-            window.__REDUX_DEVTOOLS_EXTENSION__()) as any
-    )
-);
-export default store;
+export default Store
